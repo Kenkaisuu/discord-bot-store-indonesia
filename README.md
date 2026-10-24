@@ -1,28 +1,28 @@
-# Store Bot Discord
+# Discord Store Bot
 
 Bot Discord untuk toko Robux dan jasa middleman. Bot ini mengelola panel produk, tiket order, log transaksi, statistik top buyer, testimoni, ulasan pembeli, cek stok, dan beberapa utilitas lain.
 
 ## Fitur
 
 - **Panel produk** dengan alur: tombol produk → pricelist → tombol buat tiket.
-- **Tiket order** untuk Robux Visend dan Jasa Middleman, serta **tiket Ask** untuk tanya-jawab.
-- **Sistem klaim tiket:** staff mengklaim tiket, bisa melepas klaim, dan hanya pengklaim, pembeli, atau admin yang bisa menutup tiket yang sudah diklaim.
-- **Order log** otomatis: status Pending → Success atau Failed, dengan foto profil pembeli.
-- **Statistik top buyer** dengan panel dan navigasi halaman, diperbarui otomatis setiap `!done`.
+- **Tiket order** untuk Robux dan Jasa Middleman, serta **tiket Ask** untuk tanya-jawab.
+- **Sistem klaim tiket:** staff mengklaim tiket dan bisa melepas klaim. Kalau sudah diklaim, hanya pengklaim, pembeli, atau admin yang bisa menutup tiket.
+- **Order log otomatis** dengan status Pending, Success, atau Failed, lengkap dengan foto profil pembeli.
+- **Statistik top buyer** dengan panel dan navigasi halaman. Diperbarui otomatis setiap `!done`.
 - **Testimoni** (`/testi`) dengan galeri foto bukti.
-- **Ulasan (vouch)** dikirim otomatis ke pembeli setelah order selesai, lewat DM.
-- **Cek stok Robux** dan pengaturan stok oleh admin.
-- **Utilitas:** `!ping` (latensi bot), `!roblox` (profil akun Roblox), `!userinfo`, `!botinfo`, `!clear`.
+- **Ulasan (vouch)** dikirim otomatis ke pembeli lewat DM setelah order selesai.
+- **Cek stok** dan pengaturan stok oleh admin.
+- **Utilitas:** `!ping` (latensi bot), `!roblox` (profil akun Roblox), `!userinfo`, `!botinfo`, dan `!clear`.
 
 ## Persyaratan
 
 - Python 3.10 atau lebih baru
 - discord.py **2.7.1** atau lebih baru (panel memakai Components V2)
-- Akun bot Discord yang sudah ditambahkan ke server dengan izin Administrator atau minimal: Manage Channels, Manage Roles, Send Messages, Embed Links, Attach Files, Read Message History
+- Akun bot Discord yang sudah ditambahkan ke server dengan izin Administrator, atau minimal: Manage Channels, Manage Roles, Send Messages, Embed Links, Attach Files, dan Read Message History
 
 ### Intents yang harus diaktifkan
 
-Di [Discord Developer Portal](https://discord.com/developers/applications) → pilih aplikasi bot → **Bot** → **Privileged Gateway Intents**, aktifkan:
+Buka [Discord Developer Portal](https://discord.com/developers/applications), pilih aplikasi bot, lalu buka **Bot → Privileged Gateway Intents**. Aktifkan:
 
 - **Server Members Intent** (untuk mencari anggota dan memberi role)
 - **Message Content Intent** (untuk command berawalan `!`)
@@ -31,8 +31,8 @@ Di [Discord Developer Portal](https://discord.com/developers/applications) → p
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/USERNAME/discord-bot-store.git
-cd discord-bot-store
+git clone https://github.com/USERNAME/discord-bot-store-indonesia.git
+cd discord-bot-store-indonesia
 
 # 2. Buat virtual environment (disarankan)
 python -m venv venv
@@ -48,7 +48,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Isi `.env`:
+Isi file `.env`:
 
 ```env
 DISCORD_TOKEN=token_bot_kamu
@@ -62,7 +62,7 @@ python bot_discord.py
 
 ## Konfigurasi
 
-Sebelum dipakai di server lain, ubah ID berikut di bagian atas `bot_discord.py`:
+Sebelum dipakai di server, ubah ID berikut di bagian atas `bot_discord.py` sesuai server kamu:
 
 | Konstanta | Fungsi |
 |---|---|
@@ -75,9 +75,9 @@ Sebelum dipakai di server lain, ubah ID berikut di bagian atas `bot_discord.py`:
 
 Role **Verified Buyer** dibuat otomatis oleh bot saat pertama kali `!done` dijalankan.
 
-### Emoji yang dibutuhkan
+### Emoji custom
 
-Bot memakai emoji custom. Upload emoji berikut ke server, lalu ganti ID di kode dengan ID emoji dari servermu. Nama di kolom pertama adalah nama yang disarankan saat upload.
+Bot memakai emoji custom. Upload emoji berikut ke server kamu, lalu ganti ID-nya di kode dengan ID emoji dari server kamu.
 
 | Nama | Dipakai untuk |
 |---|---|
@@ -87,10 +87,10 @@ Bot memakai emoji custom. Upload emoji berikut ke server, lalu ganti ID di kode 
 | `centang`, `sparkles`, `klaim`, `tutup`, `seru`, `pasir`, `gembok` | Notifikasi, tombol, dan status tiket |
 | `stock_box`, `stock_ready`, `stock_empty`, `rate_tag` | Panel stok |
 | `topbuyer`, `stats`, `totalorder`, `totalprofit`, `buyertotal` | Panel statistik |
-| `success`, `pending`, `failed` | **Animasi (GIF)**, dipakai di log order |
-| `refresh` | **Animasi (GIF)**, dipakai di `!setstock` |
+| `success`, `pending`, `failed` | **Emoji animasi (GIF)**, dipakai di log order |
+| `refresh` | **Emoji animasi (GIF)**, dipakai di `!setstock` |
 
-Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau kamu mengganti emoji, pastikan formatnya sesuai.
+Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau mengganti emoji, pastikan formatnya sesuai.
 
 ## Daftar Perintah
 
@@ -99,11 +99,11 @@ Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau kamu
 | Perintah | Fungsi |
 |---|---|
 | `!setuptiket` | Memasang panel produk di channel |
-| `!setupstats` | Membuat pesan statistik top buyer yang akan di-update otomatis |
+| `!setupstats` | Membuat pesan statistik top buyer yang diperbarui otomatis |
 | `!done <nominal>` | Menandai order di tiket sebagai Success, menghitung statistik, dan memberi role Verified Buyer. Contoh: `!done 16.000` |
-| `!addstock <jumlah>` | Menambah stok Robux |
-| `!removestock <jumlah>` | Mengurangi stok Robux (alias: `!minstock`, `!delstock`) |
-| `!setstock <jumlah>` | Mengatur stok Robux langsung |
+| `!addstock <jumlah>` | Menambah stok |
+| `!removestock <jumlah>` | Mengurangi stok (alias: `!minstock`, `!delstock`) |
+| `!setstock <jumlah>` | Mengatur stok langsung |
 | `!middleman` | Menampilkan info jasa middleman |
 | `!clear <jumlah>` | Menghapus pesan di channel (alias: `!purge`) |
 
@@ -137,11 +137,11 @@ Order yang sama tidak bisa di-`!done` dua kali.
 
 ## File Data
 
-Bot menyimpan data di file JSON di folder tempat bot dijalankan. File ini dibuat otomatis:
+Bot menyimpan data dalam file JSON di folder tempat bot dijalankan. File ini dibuat otomatis:
 
 | File | Isi |
 |---|---|
-| `stock_data.json` | Stok Robux |
+| `stock_data.json` | Stok |
 | `stats_data.json` | Statistik dan data pembeli untuk top buyer |
 | `active_orders.json` | Order yang sedang berjalan |
 | `order_log_counter.json` | Nomor urut log order |
@@ -155,18 +155,18 @@ File-file ini berisi data pembeli dan transaksi. **Jangan di-commit ke GitHub.**
 
 - **Jangan pernah menulis token di kode atau mengunggahnya ke GitHub.** Simpan di file `.env` atau environment variable.
 - Kalau token pernah terlihat publik, segera **Reset Token** di Developer Portal (Bot → Reset Token), lalu perbarui `.env`.
-- Gunakan repo **Private** jika kode berisi data toko atau ID yang tidak ingin dibagikan.
+- Jika kode berisi ID atau data yang tidak ingin dibagikan, gunakan repo **Private**.
 
 ## Catatan
 
 - Panel yang sudah terpasang di channel tidak berubah otomatis. Setelah update, jalankan ulang `!setuptiket` atau `!setupstats`.
-- Tombol navigasi halaman top buyer hanya aktif selama bot berjalan. Setelah restart, panel perlu diperbarui lewat `!done` atau `!stats`.
-- Tiket yang dibuat sebelum update sistem klaim tidak memiliki data klaim, sehingga tombol klaimnya tidak bekerja. Tutup tiket seperti ini secara manual.
+- Tombol navigasi halaman top buyer hanya aktif selama bot berjalan. Setelah restart, panel diperbarui lewat `!done` atau `!stats`.
+- Tiket yang dibuat sebelum sistem klaim diperbarui tidak punya data klaim, sehingga tombol klaimnya tidak bekerja. Tutup tiket seperti ini secara manual.
 
 ## Struktur Repo
 
 ```
-discord-bot-store/
+discord-bot-store-indonesia/
 ├── bot_discord.py      # Kode utama bot
 ├── requirements.txt    # Daftar library
 ├── .env.example        # Contoh file konfigurasi token
