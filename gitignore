@@ -1,0 +1,45 @@
+# ==========================================
+# RAHASIA - JANGAN PERNAH DI-COMMIT
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# DATA RUNTIME BOT (data pembeli, transaksi, dan stok)
+# Dibuat otomatis oleh bot saat berjalan
+# ==========================================
+active_orders.json
+order_log_counter.json
+stats_data.json
+stock_data.json
+testi_data.json
+vouch_counter.json
+ticket_claims.json
+*.json.bak
+
+# ==========================================
+# PYTHON
+# ==========================================
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# ==========================================
+# EDITOR & OS
+# ==========================================
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# LOG & FILE SEMENTARA
+# ==========================================
+*.log
+*.tmp
