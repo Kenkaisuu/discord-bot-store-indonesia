@@ -1,4 +1,4 @@
-# Kenkaisuu Store Bot
+# Store Bot Discord
 
 Bot Discord untuk toko Robux dan jasa middleman. Bot ini mengelola panel produk, tiket order, log transaksi, statistik top buyer, testimoni, ulasan pembeli, cek stok, dan beberapa utilitas lain.
 
