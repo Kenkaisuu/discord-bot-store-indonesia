@@ -28,6 +28,28 @@ intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # ==========================================
+# IZIN STAFF (untuk command & slash yang khusus admin/staff)
+# ==========================================
+STAFF_ROLE_NAMES = ["Staff", "Admin"]  # nama role yang dianggap staff
+
+
+def member_is_staff(member: discord.Member) -> bool:
+    if member is None:
+        return False
+    perms = member.guild_permissions
+    if perms.administrator or perms.manage_guild or perms.manage_channels:
+        return True
+    return any(role.name in STAFF_ROLE_NAMES for role in member.roles)
+
+
+def is_staff():
+    async def predicate(ctx):
+        if ctx.guild is None:
+            return False
+        return member_is_staff(ctx.author)
+    return commands.check(predicate)
+
+# ==========================================
 # ⚙️ CONFIGURATION & CUSTOM EMOJIS
 # ==========================================
 GUILD_ID             = 1499785130183491684  # 👑 ID Server Discord
@@ -983,6 +1005,16 @@ async def on_ready():
 
 
 @bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send(f"❌ {ctx.author.mention}, perintah ini khusus staff.", delete_after=8)
+        return
+    print(f"Error pada command {ctx.command}: {error}")
+
+
+@bot.event
 async def on_message(message):
     if message.author.bot:
         return
@@ -1002,6 +1034,7 @@ async def on_message(message):
 # SLASH COMMAND (/TESTI)
 # ==========================================
 @bot.tree.command(name="testi", description="Kirim testimoni transaksi baru ke channel testimoni")
+@app_commands.default_permissions(manage_guild=True)
 @app_commands.describe(
     buyer="Pilih Pembeli/Customer",
     produk="Nama Produk (contoh: Robux Visend / Middleman)",
@@ -1017,6 +1050,9 @@ async def slash_testi(
     foto_1: discord.Attachment,
     foto_2: discord.Attachment = None
 ):
+    if not member_is_staff(interaction.user):
+        await interaction.response.send_message("❌ Perintah ini khusus staff.", ephemeral=True)
+        return
     await interaction.response.defer(ephemeral=True)
 
     testi_channel = interaction.guild.get_channel(TESTIMONY_CHANNEL_ID)
@@ -1069,7 +1105,7 @@ async def slash_testi(
 # COMMAND MODERASI & USER/BOT INFO
 # ==========================================
 @bot.command(name="clear", aliases=["purge"])
-@commands.has_permissions(manage_messages=True)
+@is_staff()
 async def clear_command(ctx, amount: int = 10):
     """Menghapus sejumlah pesan di channel/tiket saat ini ✨"""
     if amount <= 0:
@@ -1086,6 +1122,7 @@ async def clear_command(ctx, amount: int = 10):
 
 
 @bot.command(name="userinfo", aliases=["ui", "user"])
+@is_staff()
 async def userinfo_command(ctx, member: discord.Member = None):
     """Mengecek info detail user/buyer (umur akun, join date, roles) 👤"""
     target = member or ctx.author
@@ -1446,7 +1483,7 @@ async def stock_command(ctx, nominal: int = None):
 
 
 @bot.command(name="addstock")
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def addstock_command(ctx, jumlah: int = None):
     if jumlah is None or jumlah <= 0:
         await ctx.send("❌ Format salah! Gunakan: `!addstock <jumlah>` (Contoh: `!addstock 5000`)")
@@ -1460,7 +1497,7 @@ async def addstock_command(ctx, jumlah: int = None):
 
 
 @bot.command(name="removestock", aliases=["minstock", "delstock"])
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def removestock_command(ctx, jumlah: int = None):
     if jumlah is None or jumlah <= 0:
         await ctx.send("❌ Format salah! Gunakan: `!removestock <jumlah>` atau `!minstock <jumlah>` (Contoh: `!removestock 200`) ⚠️")
@@ -1479,7 +1516,7 @@ async def removestock_command(ctx, jumlah: int = None):
 
 
 @bot.command(name="setstock")
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def setstock_command(ctx, jumlah: int = None):
     if jumlah is None or jumlah < 0:
         await ctx.send("❌ Format salah! Gunakan: `!setstock <jumlah>` (Contoh: `!setstock 10000`)")
@@ -1543,7 +1580,7 @@ async def middleman_command(ctx):
 
 
 @bot.command(name="setupstats")
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def setupstats_command(ctx):
     file_path = "stats_data.json"
     if os.path.exists(file_path):
@@ -1572,7 +1609,7 @@ async def setupstats_command(ctx):
 
 
 @bot.command(name="done")
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def done_command(ctx, *, harga: str = None):
     if not harga:
         await ctx.send("❌ Format salah! Ketik seperti ini: `!done 16.000` atau `!done Rp 16.000` ")
@@ -1816,7 +1853,7 @@ async def roblox(ctx, username: str = None):
 
 
 @bot.command()
-@commands.has_permissions(administrator=True)
+@is_staff()
 async def setuptiket(ctx):
     await ctx.send(view=ProductPanelLayout())
     try:
