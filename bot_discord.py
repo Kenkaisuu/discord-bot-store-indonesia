@@ -1119,19 +1119,254 @@ async def botinfo_command(ctx):
 
     uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
     ws_latency = round(bot.latency * 1000)
+    total_members = sum(g.member_count for g in bot.guilds)
 
-    embed = discord.Embed(
-        title="🤖 Informasi & Status Bot Store",
-        color=0x2b2d31
+    head = discord.ui.TextDisplay(
+        f"## 🤖 Informasi & Status Bot Store\n"
+        f"👑 **Nama Bot:** `{bot.user.name}`"
     )
-    embed.set_thumbnail(url=bot.user.display_avatar.url)
-    embed.add_field(name="👑 Nama Bot", value=f"`{bot.user.name}`", inline=True)
-    embed.add_field(name="⚡ Websocket Latency", value=f"`{ws_latency} ms`", inline=True)
-    embed.add_field(name="⏳ Uptime", value=f"`{uptime_str}`", inline=True)
-    embed.add_field(name="📊 Total Server", value=f"`{len(bot.guilds)}`", inline=True)
-    embed.add_field(name="👥 Total Member", value=f"`{sum(g.member_count for g in bot.guilds)}`", inline=True)
+    layout = discord.ui.LayoutView(timeout=None)
+    container = discord.ui.Container()
+    container.add_item(discord.ui.Section(head, accessory=discord.ui.Thumbnail(bot.user.display_avatar.url)))
+    container.add_item(discord.ui.Separator())
+    container.add_item(discord.ui.TextDisplay(
+        f"⚡ **Latency:** `{ws_latency} ms`  •  ⏳ **Uptime:** `{uptime_str}`\n"
+        f"📊 **Server:** `{len(bot.guilds)}`  •  👥 **Member:** `{total_members}`"
+    ))
+    layout.add_item(container)
 
-    await ctx.send(embed=embed)
+    await ctx.send(view=layout)
+
+
+# ==========================================
+# /ASK - FAQ SEPUTAR ROBLOX (tanpa API, jawaban tersimpan di kode)
+# ==========================================
+ROBLOX_FAQ = [
+    {
+        "key": "limited",
+        "judul": "Apa itu Limited item?",
+        "kata_kunci": ["limited", "langka", "item langka", "harga item", "unique"],
+        "jawaban": (
+            "**Limited** adalah item langka di Roblox dengan jumlah yang terbatas. "
+            "Item ini sudah tidak dijual lagi di toko, jadi hanya bisa didapat lewat pemain lain di marketplace atau trade.\n\n"
+            "✦ Harganya ditentukan oleh permintaan pemain, jadi nilainya bisa naik atau turun.\n"
+            "✦ Ada juga **Limited U** (Unique), yaitu Limited yang hanya dimiliki satu orang di seluruh Roblox.\n"
+            "✦ Untuk cek perkiraan nilai item, pemain biasanya memakai situs komunitas pihak ketiga seperti Rolimons."
+        ),
+    },
+    {
+        "key": "robux",
+        "judul": "Apa itu Robux?",
+        "kata_kunci": ["robux", "rbx", "mata uang", "koin"],
+        "jawaban": (
+            "**Robux** adalah mata uang virtual di Roblox.\n\n"
+            "✦ Dipakai untuk membeli item avatar, Game Pass, dan item di dalam game.\n"
+            "✦ Dibeli dengan uang asli lewat menu Robux di Roblox.\n"
+            "✦ Cek harga Robux di toko ini dengan perintah `!stock`."
+        ),
+    },
+    {
+        "key": "premium",
+        "judul": "Apa itu Roblox Premium?",
+        "kata_kunci": ["premium", "langganan", "membership"],
+        "jawaban": (
+            "**Roblox Premium** adalah langganan berbayar di Roblox.\n\n"
+            "✦ Member mendapat Robux setiap bulan sesuai paket.\n"
+            "✦ Member mendapat diskon dan keuntungan lain di marketplace.\n"
+            "✦ Harga dan paket bisa berbeda di tiap negara, cek menu Premium di akun Roblox."
+        ),
+    },
+    {
+        "key": "devex",
+        "judul": "Apa itu DevEx?",
+        "kata_kunci": ["devex", "developer exchange", "cairkan", "tarik robux", "cashout"],
+        "jawaban": (
+            "**DevEx** (Developer Exchange) adalah program dari Roblox yang memungkinkan kreator game menukar Robux hasil penjualan menjadi uang asli.\n\n"
+            "✦ Ada syarat seperti usia, jumlah minimum Robux, dan verifikasi akun.\n"
+            "✦ Syarat bisa berubah, cek dokumentasi resmi Roblox sebelum mengajukan."
+        ),
+    },
+    {
+        "key": "cara_robux",
+        "judul": "Cara mendapatkan Robux yang resmi?",
+        "kata_kunci": ["cara dapat robux", "robux gratis", "dapat robux", "dapetin robux"],
+        "jawaban": (
+            "Cara resmi mendapatkan Robux:\n\n"
+            "✦ Membeli Robux atau berlangganan Roblox Premium.\n"
+            "✦ Menjual item di marketplace jika kamu punya item.\n"
+            "✦ Membuat game dengan Game Pass atau developer product, lalu mendapat bagian dari penjualannya.\n\n"
+            "⚠️ Waspada dengan janji **Robux gratis** atau *generator* Robux. Hampir selalu penipuan."
+        ),
+    },
+    {
+        "key": "gamepass",
+        "judul": "Apa itu Game Pass?",
+        "kata_kunci": ["gamepass", "game pass", "gp"],
+        "jawaban": (
+            "**Game Pass** adalah item berbayar yang dibeli sekali dengan Robux dan memberi keuntungan tetap di game tertentu. "
+            "Game Pass hanya berlaku di game yang membuatnya."
+        ),
+    },
+    {
+        "key": "trading",
+        "judul": "Apa itu trading di Roblox?",
+        "kata_kunci": ["trade", "trading", "tukar item", "tukar"],
+        "jawaban": (
+            "**Trading** adalah pertukaran item antar pemain di Roblox.\n\n"
+            "✦ Trade hanya bisa dilakukan jika akun memenuhi syarat tertentu, dan syaratnya bisa berubah.\n"
+            "✦ Cek nilai kedua item sebelum trade, dan jangan percaya janji tukar yang tidak jelas.\n"
+            "✦ Untuk transaksi besar, pakai jasa middleman / rekber."
+        ),
+    },
+    {
+        "key": "studio",
+        "judul": "Apa itu Roblox Studio?",
+        "kata_kunci": ["studio", "bikin game", "buat game", "membuat game", "develop"],
+        "jawaban": (
+            "**Roblox Studio** adalah alat gratis untuk membuat game di Roblox.\n\n"
+            "✦ Kode game ditulis dengan bahasa **Luau**, turunan dari Lua.\n"
+            "✦ Unduh Roblox Studio dari situs resmi Roblox."
+        ),
+    },
+    {
+        "key": "grup",
+        "judul": "Apa itu Group Roblox?",
+        "kata_kunci": ["grup", "group", "rank", "komunitas"],
+        "jawaban": (
+            "**Group** adalah komunitas di Roblox yang punya anggota, rank (peran), dan halaman sosial.\n\n"
+            "✦ Grup bisa memiliki game atau item, dan penjualannya bisa masuk ke grup."
+        ),
+    },
+    {
+        "key": "verified",
+        "judul": "Apa itu akun Verified?",
+        "kata_kunci": ["verified", "verifikasi", "verif", "email", "2fa"],
+        "jawaban": (
+            "Akun **Verified** adalah akun yang sudah memverifikasi email dan identitasnya di Roblox.\n\n"
+            "✦ Verifikasi dibutuhkan untuk beberapa fitur, seperti trading atau DevEx.\n"
+            "✦ Aktifkan juga verifikasi dua langkah (2-Step Verification) untuk keamanan."
+        ),
+    },
+    {
+        "key": "hacked",
+        "judul": "Akun Roblox saya dibajak, apa yang harus dilakukan?",
+        "kata_kunci": ["hack", "dibajak", "kena hack", "hacked", "akun hilang", "password"],
+        "jawaban": (
+            "Kalau akunmu dibajak, lakukan ini secepatnya:\n\n"
+            "1. Ganti password akun.\n"
+            "2. Aktifkan verifikasi dua langkah (2-Step Verification).\n"
+            "3. Cek riwayat login dan perangkat, lalu keluarkan perangkat yang tidak dikenal.\n"
+            "4. Hapus aplikasi atau situs pihak ketiga yang mencurigakan dari pengaturan akun.\n"
+            "5. Jika tetap tidak bisa masuk, hubungi Roblox Support lewat situs resmi."
+        ),
+    },
+    {
+        "key": "penipuan",
+        "judul": "Bagaimana menghindari penipuan di Roblox?",
+        "kata_kunci": ["penipuan", "scam", "tipu", "penipu", "aman"],
+        "jawaban": (
+            "✦ **Jangan pernah** memberikan password atau kode verifikasi ke siapa pun, termasuk yang mengaku staff Roblox.\n"
+            "✦ Jangan klik link yang menjanjikan Robux gratis atau hadiah.\n"
+            "✦ Untuk transaksi besar, selalu pakai jasa middleman / rekber.\n"
+            "✦ Kalau ada yang minta login lewat link asing, anggap itu penipuan."
+        ),
+    },
+    {
+        "key": "error_game",
+        "judul": "Game Roblox tidak bisa dibuka atau error, kenapa?",
+        "kata_kunci": ["error", "tidak bisa dibuka", "gagal load", "lag", "crash", "kick"],
+        "jawaban": (
+            "Coba langkah umum berikut:\n\n"
+            "✦ Pastikan koneksi internet stabil.\n"
+            "✦ Tutup dan buka lagi aplikasi Roblox, atau restart perangkat.\n"
+            "✦ Perbarui aplikasi Roblox ke versi terbaru.\n"
+            "✦ Cek apakah server Roblox sedang bermasalah.\n\n"
+            "Kalau masih error, cari kode error-nya di halaman bantuan resmi Roblox."
+        ),
+    },
+    {
+        "key": "order_toko",
+        "judul": "Cara order Robux di toko ini?",
+        "kata_kunci": ["order", "beli", "pesan", "tiket", "harga robux", "pricelist"],
+        "jawaban": (
+            "✦ Buka panel produk di channel order, lalu pilih produk yang kamu mau.\n"
+            "✦ Baca pricelist, lalu tekan **Buat Tiket**.\n"
+            "✦ Admin akan membantu di dalam tiket. Cek stok dengan `!stock`."
+        ),
+    },
+]
+
+ASK_FOOTER = "-# Info ini bisa berubah. Untuk memastikan, cek sumber resmi Roblox."
+
+
+def _ask_choices():
+    return [app_commands.Choice(name=f["judul"][:100], value=f["key"]) for f in ROBLOX_FAQ[:25]]
+
+
+def _find_faq(key: str):
+    return next((f for f in ROBLOX_FAQ if f["key"] == key), None)
+
+
+def _search_faq(query: str):
+    q = query.lower().strip()
+    if not q:
+        return None
+    best, best_score = None, 0
+    for f in ROBLOX_FAQ:
+        haystack = " ".join([f["judul"].lower()] + f["kata_kunci"])
+        score = sum(1 for word in q.split() if word in haystack)
+        if q in haystack:
+            score += 2
+        if score > best_score:
+            best, best_score = f, score
+    return best
+
+
+def _ask_layout(faq: dict, user_name: str) -> discord.ui.LayoutView:
+    layout = discord.ui.LayoutView(timeout=None)
+    container = discord.ui.Container()
+    container.add_item(discord.ui.TextDisplay(f"## 🎮 {faq['judul']}"))
+    container.add_item(discord.ui.Separator())
+    container.add_item(discord.ui.TextDisplay(faq["jawaban"]))
+    container.add_item(discord.ui.TextDisplay(f"{ASK_FOOTER} • Ditanya oleh {user_name}"))
+    layout.add_item(container)
+    return layout
+
+
+@bot.tree.command(name="ask", description="Tanya seputar Roblox (jawaban sudah tersimpan di bot)")
+@app_commands.describe(
+    topik="Pilih pertanyaan yang sering ditanyakan",
+    cari="Atau ketik kata kunci, misalnya: limited, devex, hacked",
+)
+@app_commands.choices(topik=_ask_choices())
+async def ask_slash(
+    interaction: discord.Interaction,
+    topik: app_commands.Choice[str] = None,
+    cari: str = None,
+):
+    # Tanpa pilihan: tampilkan daftar topik yang tersedia
+    if topik is None and not cari:
+        daftar = "\n".join(f"✦ {f['judul']}" for f in ROBLOX_FAQ)
+        layout = discord.ui.LayoutView(timeout=None)
+        container = discord.ui.Container()
+        container.add_item(discord.ui.TextDisplay("## 🎮 Tanya Seputar Roblox"))
+        container.add_item(discord.ui.Separator())
+        container.add_item(discord.ui.TextDisplay(
+            f"Pilih topik di kolom `topik`, atau ketik kata kunci di kolom `cari`.\n\n{daftar}"
+        ))
+        layout.add_item(container)
+        await interaction.response.send_message(view=layout, ephemeral=True)
+        return
+
+    faq = _find_faq(topik.value) if topik else _search_faq(cari)
+    if faq is None:
+        await interaction.response.send_message(
+            f"❌ Maaf, aku belum punya jawaban untuk `{cari}`. Coba kata kunci lain, atau pilih topik di kolom `topik`.",
+            ephemeral=True,
+        )
+        return
+
+    await interaction.response.send_message(view=_ask_layout(faq, interaction.user.name))
 
 
 # ==========================================
