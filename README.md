@@ -76,6 +76,15 @@ Sebelum dipakai di server, ubah ID berikut di bagian atas `bot_discord.py` sesua
 
 Role **Verified Buyer** dibuat otomatis oleh bot saat pertama kali `!done` dijalankan.
 
+### Hak akses staff
+
+Command admin dan staff hanya bisa dipakai oleh member yang:
+
+- punya izin **Administrator**, **Manage Server**, atau **Manage Channels**, atau
+- punya role bernama **Staff** atau **Admin**.
+
+Nama role tersebut bisa diubah di `STAFF_ROLE_NAMES` pada `bot_discord.py`. Member biasa tidak melihat command staff di `!help`, dan `/testi` tidak muncul di daftar slash command mereka.
+
 ### Emoji custom
 
 Bot memakai emoji custom. Upload emoji berikut ke server kamu, lalu ganti ID-nya di kode dengan ID emoji dari server kamu.
@@ -95,7 +104,7 @@ Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau meng
 
 ## Daftar Perintah
 
-### Admin
+### Staff / Admin
 
 | Perintah | Fungsi |
 |---|---|
@@ -107,6 +116,7 @@ Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau meng
 | `!setstock <jumlah>` | Mengatur stok langsung |
 | `!middleman` | Menampilkan info jasa middleman |
 | `!clear <jumlah>` | Menghapus pesan di channel (alias: `!purge`) |
+| `!userinfo [@user]` | Menampilkan info pengguna (alias: `!ui`, `!user`) |
 
 ### Umum
 
@@ -119,7 +129,6 @@ Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau meng
 | `!rbx` | Menghitung pajak Robux |
 | `!roblox <username>` | Menampilkan profil akun Roblox |
 | `!ping` | Menampilkan latensi bot |
-| `!userinfo [@user]` | Menampilkan info pengguna (alias: `!ui`, `!user`) |
 | `!botinfo` | Menampilkan info bot |
 | `/testi` | Mengirim testimoni dengan foto bukti (slash command) |
 | `/ask` | Menampilkan daftar topik FAQ Roblox |
