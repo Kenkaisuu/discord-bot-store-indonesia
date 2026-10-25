@@ -10,6 +10,7 @@ Bot Discord untuk toko Robux dan jasa middleman. Bot ini mengelola panel produk,
 - **Order log otomatis** dengan status Pending, Success, atau Failed, lengkap dengan foto profil pembeli.
 - **Statistik top buyer** dengan panel dan navigasi halaman. Diperbarui otomatis setiap `!done`.
 - **Testimoni** (`/testi`) dengan galeri foto bukti.
+- **FAQ Roblox** (`/ask`) dengan dropdown topik dan pencarian kata kunci. Jawabannya tersimpan di kode, tanpa API key.
 - **Ulasan (vouch)** dikirim otomatis ke pembeli lewat DM setelah order selesai.
 - **Cek stok** dan pengaturan stok oleh admin.
 - **Utilitas:** `!ping` (latensi bot), `!roblox` (profil akun Roblox), `!userinfo`, `!botinfo`, dan `!clear`.
@@ -121,6 +122,9 @@ Emoji animasi harus memakai format `<a:nama:id>`, bukan `<:nama:id>`. Kalau meng
 | `!userinfo [@user]` | Menampilkan info pengguna (alias: `!ui`, `!user`) |
 | `!botinfo` | Menampilkan info bot |
 | `/testi` | Mengirim testimoni dengan foto bukti (slash command) |
+| `/ask` | Menampilkan daftar topik FAQ Roblox |
+| `/ask topik:<pilihan>` | Menampilkan jawaban dari dropdown topik |
+| `/ask cari:<kata kunci>` | Mencari jawaban dengan kata kunci, misalnya `limited` atau `devex` |
 
 ## Alur Order
 
@@ -150,6 +154,12 @@ Bot menyimpan data dalam file JSON di folder tempat bot dijalankan. File ini dib
 | `vouch_counter.json` | Nomor urut ulasan |
 
 File-file ini berisi data pembeli dan transaksi. **Jangan di-commit ke GitHub.** `.gitignore` sudah mengecualikannya. Simpan backup secara berkala jika data penting.
+
+## FAQ Roblox (`/ask`)
+
+Jawaban `/ask` sudah tersimpan di kode, jadi tidak memerlukan API key atau biaya tambahan. Bot hanya bisa menjawab topik yang ada di daftar `ROBLOX_FAQ` pada `bot_discord.py`. Untuk menambah topik, tambahkan entri baru ke daftar itu dengan `key`, `judul`, `kata_kunci`, dan `jawaban`.
+
+Jawaban yang tersimpan perlu diperbarui secara berkala, terutama untuk topik yang sering berubah seperti Limited dan DevEx.
 
 ## Keamanan
 
